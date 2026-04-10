@@ -5,16 +5,27 @@
   --color-skeleton-light: #475569;
   --color-surface: #1e293b;
   --color-base: #0f172a;
+  --color-indigo-glow: #6366f1;
+  --color-indigo-deep: #4338ca;
+  --color-indigo-soft: #818cf8;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-skeleton) var(--color-base);
+  scrollbar-color: #334155 #0f172a;
 }
 
 body {
-  background-color: var(--color-base);
+  background-color: #0f172a;
   font-family: var(--font-sans), system-ui, sans-serif;
+  color: #e2e8f0;
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.15);
 }
