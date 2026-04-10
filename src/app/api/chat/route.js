@@ -35,14 +35,14 @@ Every sentence must be written in ${language || "English"} script.`;
       temperature: 0.7
     });
 
-    const reply = response.choices[0]?.message?.content || "Namaste! I am here to help, but I couldn't generate a response right now. Please try again.";
-    
+    const reply = response.choices[0]?.message?.content || "Namaste! I am here to help, but I couldn't generate a response right now. Please try again later.";
+
     return NextResponse.json({ reply });
 
   } catch (error) {
     console.error("Chat API error:", error);
-    return NextResponse.json({ 
-      reply: "I'm having a bit of trouble connecting to my knowledge base. Please try again in a moment." 
+    return NextResponse.json({
+      reply: "I'm having a bit of trouble connecting to my knowledge base. Please try again in a moment."
     }, { status: 500 });
   }
 }
