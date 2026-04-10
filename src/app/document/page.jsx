@@ -1,242 +1,215 @@
-import Link from "next/link";
+"use client";
 
-const summaryPoints = [
-  "You have received an income tax notice under Section 143(1) for Assessment Year 2023–24.",
-  "The department has identified a mismatch of ₹45,200 between your filed return and Form 26AS.",
-  "You are required to respond within 30 days from the date of this notice.",
-  "No penalty has been imposed yet — this is a preliminary inquiry notice.",
-];
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useGemini } from "@/hooks/useGemini";
+import { useSpeech } from "@/hooks/useSpeech";
+import { CheckCircle2, Building2, Volume2, VolumeX, ArrowLeft, FileText, Share2, AlertCircle } from "lucide-react";
+import mermaid from "mermaid";
 
-const steps = [
-  {
-    num: 1,
-    title: "Don't panic — this is a routine notice",
-    detail: "Section 143(1) notices are auto-generated. No officer visited your data.",
-    done: false,
-  },
-  {
-    num: 2,
-    title: "Login to the Income Tax portal",
-    detail: "Go to incometax.gov.in → e-Filing → My Account → e-Proceedings",
-    done: false,
-  },
-  {
-    num: 3,
-    title: "Review the mismatch details",
-    detail: "Check which income source is flagged. Usually salary, bank interest, or dividends.",
-    done: false,
-  },
-  {
-    num: 4,
-    title: "Submit your response online",
-    detail: "If income is correct, choose 'Agree' or 'Disagree with explanation' and file your reply.",
-    done: false,
-  },
-];
+export default function DocumentResultPage() {
+  const router = useRouter();
+  const { result } = useGemini();
+  const { speaking, speak, stop } = useSpeech();
+  const mermaidRef = useRef(null);
 
-const docsRequired = [
-  { icon: "📋", label: "Form 26AS — download from your bank or IT portal" },
-  { icon: "📄", label: "Original ITR-V acknowledgment copy" },
-  { icon: "🏦", label: "Bank statements for the assessment year" },
-];
+  useEffect(() => {
+    if (!result) {
+      router.push("/");
+    }
+  }, [result, router]);
 
-export default function DocumentResult() {
+  useEffect(() => {
+    if (result && result.mermaid && mermaidRef.current) {
+      try {
+        mermaid.initialize({ 
+          startOnLoad: false, 
+          theme: 'neutral',
+          fontFamily: 'inherit'
+        });
+        
+        mermaid.render('mermaid-svg-' + Date.now(), result.mermaid)
+          .then(({ svg }) => {
+            if (mermaidRef.current) mermaidRef.current.innerHTML = svg;
+          })
+          .catch((err) => {
+            console.error("Mermaid syntax error:", err);
+            if (mermaidRef.current) {
+              mermaidRef.current.innerHTML = "<p class='text-text-muted italic p-4'>Information map simplified.</p>";
+            }
+          });
+      } catch (err) {
+        console.error("Mermaid init error:", err);
+      }
+    }
+  }, [result]);
+
+  if (!result) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center p-6">
+        <div className="text-xl font-bold text-primary">Preparing Documentation...</div>
+      </div>
+    );
+  }
+
+  const handleSpeak = () => {
+    if (speaking) {
+      stop();
+    } else {
+      speak(result.simplified_summary || "No summary available.", result.language || "English");
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-10 px-6 py-10 bg-background font-body text-on-background">
-
-      {/* Breadcrumb */}
-      <nav className="mx-auto w-full max-w-7xl flex items-center gap-2 text-sm text-on-surface-variant font-headline">
-        <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-        <span>/</span>
-        <Link href="/" className="hover:text-primary transition-colors">Documents</Link>
-        <span>/</span>
-        <span className="text-primary font-bold truncate max-w-[200px]">Notice_2024.pdf</span>
-      </nav>
-
-      {/* Main grid */}
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 lg:grid-cols-5">
-
-        {/* Left column — 60% */}
-        <div className="flex flex-col gap-6 lg:col-span-3">
-
-          {/* Document type badge + title */}
+    <div className="min-h-screen bg-surface py-12 px-8 overflow-y-auto">
+      <div className="max-w-7xl mx-auto pb-32">
+        
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 bg-white p-8 rounded-xl gov-shadow border-b-4 border-secondary">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-tertiary/30 bg-tertiary/10 px-3 py-1 mb-3">
-              <div className="h-1.5 w-1.5 rounded-full bg-tertiary animate-pulse" />
-              <span className="text-xs font-bold text-tertiary tracking-wide uppercase">Action Required within 30 days</span>
+            <div className="flex items-center gap-3 mb-1">
+               <button onClick={() => router.push("/")} className="text-primary hover:text-secondary"><ArrowLeft className="w-6 h-6" /></button>
+               <h1 className="text-4xl font-black text-primary tracking-tight">Analysis Result</h1>
             </div>
-            <h1 className="text-3xl font-extrabold text-on-background font-headline sm:text-4xl tracking-tight">Income Tax Notice — Section 143(1)</h1>
-            <p className="mt-2 text-sm text-on-surface-variant">Income Tax Department · Assessment Year 2023–24 · Uploaded just now</p>
+            <p className="text-text-muted font-medium ml-9 uppercase text-[10px] tracking-[0.2em]">Official Government Document Breakdown</p>
           </div>
-
-          {/* Summary card */}
-          <div className="bg-white rounded-2xl p-7 shadow-lg border border-outline/10">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="h-10 w-10 rounded-xl bg-primary-container border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                <span className="material-symbols-outlined">summarize</span>
-              </div>
-              <h2 className="text-lg font-bold text-on-background font-headline">Plain Language Summary</h2>
-            </div>
-            <ul className="space-y-4">
-              {summaryPoints.map((point, i) => (
-                <li key={i} className="flex gap-4 text-base text-secondary leading-relaxed">
-                  <span className="mt-0.5 h-6 w-6 shrink-0 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs text-primary font-bold">{i + 1}</span>
-                  {point}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Steps list */}
-          <div className="bg-white rounded-2xl p-7 shadow-lg border border-outline/10">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-10 w-10 rounded-xl bg-primary-container border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                <span className="material-symbols-outlined">route</span>
-              </div>
-              <h2 className="text-lg font-bold text-on-background font-headline">Your Action Steps</h2>
-            </div>
-            <div className="flex flex-col gap-6">
-              {steps.map((s) => (
-                <div key={s.num} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="h-8 w-8 shrink-0 rounded-full border-2 border-primary/30 bg-primary-container flex items-center justify-center text-sm font-bold text-primary">
-                      {s.num}
-                    </div>
-                    {s.num < steps.length && (
-                      <div className="mt-2 h-full min-h-[2rem] w-px bg-outline/30" />
-                    )}
-                  </div>
-                  <div className="flex-1 pb-4">
-                    <p className="text-base font-bold text-on-background font-headline mb-1">{s.title}</p>
-                    <p className="text-sm text-secondary leading-relaxed">{s.detail}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Documents required */}
-          <div className="bg-white rounded-2xl p-7 shadow-lg border border-outline/10">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-10 w-10 rounded-xl bg-primary-container border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                <span className="material-symbols-outlined">folder</span>
-              </div>
-              <h2 className="text-lg font-bold text-on-background font-headline">Documents You Will Need</h2>
-            </div>
-            <div className="flex flex-col gap-3">
-              {docsRequired.map((d, i) => (
-                <div key={i} className="flex items-center gap-4 rounded-xl bg-surface border border-outline/10 p-4">
-                  <span className="text-xl">{d.icon}</span>
-                  <p className="text-sm font-medium text-on-background">{d.label}</p>
-                </div>
-              ))}
-            </div>
+          <div className="flex gap-4">
+             <button
+               onClick={handleSpeak}
+               className={`flex items-center gap-3 px-8 py-3 rounded-md font-bold text-white transition-all shadow-lg ${
+                 speaking ? "bg-primary" : "bg-secondary"
+               }`}
+             >
+               {speaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+               {speaking ? "Stop Narration" : "Listen in " + result.language}
+             </button>
+             <button className="p-3 bg-white border-2 border-primary text-primary rounded-md hover:bg-surface transition-all">
+                <Share2 className="w-5 h-5" />
+             </button>
           </div>
         </div>
 
-        {/* Right column — 40% */}
-        <div className="flex flex-col gap-6 lg:col-span-2">
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* Left Column (60%) */}
+          <div className="w-full lg:w-[60%] flex flex-col gap-8">
+            
+            {/* Summary Card */}
+            <div className="p-8 rounded-xl bg-white gov-shadow navy-border-left">
+              <h2 className="text-xl font-black text-primary mb-5 flex items-center gap-3">
+                <div className="w-2 h-6 bg-secondary rounded-full"></div>
+                Executive Summary
+              </h2>
+              <p className="text-text-main leading-relaxed text-lg">
+                {result.simplified_summary || "Could not generate summary."}
+              </p>
+            </div>
 
-          {/* Authority card */}
-          <div className="bg-white rounded-2xl p-7 shadow-lg border border-outline/10">
-            <h2 className="text-lg font-bold text-on-background font-headline mb-6">Issuing Authority</h2>
-            <div className="flex items-start gap-4 mb-6">
-              <div className="h-14 w-14 shrink-0 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-2xl">
-                🏛️
+            {/* Application Requirements */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Documents Required */}
+              <div className="p-8 rounded-xl bg-white gov-shadow border-t-4 border-primary">
+                <h2 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
+                   <FileText className="w-5 h-5 text-secondary" /> Required Documents
+                </h2>
+                <ul className="flex flex-col gap-4">
+                  {result.procedural_requirements?.mandatory_documents?.map((doc, index) => (
+                    <li key={index} className="flex items-start gap-3 p-4 rounded-lg bg-surface border border-border">
+                      <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                      <span className="text-text-main text-sm font-medium">{doc}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div>
-                <p className="text-base font-bold text-on-background font-headline">Income Tax Department</p>
-                <p className="text-xs text-on-surface-variant mt-1">Ministry of Finance, Govt. of India</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-primary" />
-                  <span className="text-xs text-primary font-bold uppercase tracking-wider">Official Government Body</span>
+
+              {/* Financials */}
+              {result.monetary_elements && (
+                <div className="p-8 rounded-xl bg-white gov-shadow border-t-4 border-secondary">
+                  <h2 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
+                     <AlertCircle className="w-5 h-5 text-secondary" /> Financial Obligations
+                  </h2>
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-lg bg-surface border border-border flex justify-between items-center">
+                      <span className="text-text-muted text-[10px] font-black uppercase tracking-wider">Demand</span>
+                      <span className="text-primary font-black text-xl">{result.monetary_elements.currency} {result.monetary_elements.amount_demand}</span>
+                    </div>
+                    <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20 flex justify-between items-center text-secondary">
+                      <span className="text-[10px] font-black uppercase tracking-wider">Deadline</span>
+                      <span className="font-black text-sm">{result.monetary_elements.payment_deadline || "N/A"}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-            <div className="space-y-3 text-sm font-medium">
-              <div className="flex items-center justify-between pb-3 border-b border-surface-variant">
-                <span className="text-on-surface-variant">Helpline</span>
-                <span className="text-on-background font-bold">1800-103-0025</span>
-              </div>
-              <div className="flex items-center justify-between pb-3 border-b border-surface-variant">
-                <span className="text-on-surface-variant">Portal</span>
-                <a href="#" className="text-primary hover:underline transition-all font-bold">incometax.gov.in</a>
-              </div>
-              <div className="flex items-center justify-between pb-1">
-                <span className="text-on-surface-variant">Deadline</span>
-                <span className="text-tertiary font-bold">30 days from notice</span>
-              </div>
-            </div>
-            <Link
-              href="#"
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-sm font-bold text-white hover:bg-primary/90 transition-all shadow-md shadow-primary/20"
-            >
-              Visit Official Portal
-              <span className="material-symbols-outlined text-[18px]">open_in_new</span>
-            </Link>
-          </div>
 
-          {/* Process flowchart */}
-          <div className="bg-white rounded-2xl p-7 shadow-lg border border-outline/10">
-            <h2 className="text-lg font-bold text-on-background font-headline mb-6">Process Flowchart</h2>
-            <div className="flex flex-col items-center gap-0">
-              {[
-                { label: "Receive Notice", color: "bg-surface-variant border border-outline/20", text: "text-on-surface-variant" },
-                { label: "Review on Portal", color: "bg-primary-container/50 border border-primary/20", text: "text-primary font-semibold" },
-                { label: "Check Mismatch", color: "bg-primary-container/50 border border-primary/20", text: "text-primary font-semibold" },
-                { label: "File Response", color: "bg-primary-container/50 border border-primary/20", text: "text-primary font-semibold" },
-                { label: "Closure / Refund", color: "bg-tertiary/10 border border-tertiary/30", text: "text-tertiary font-semibold" },
-              ].map((node, i, arr) => (
-                <div key={i} className="flex flex-col items-center w-full">
-                  <div className={`w-full rounded-xl ${node.color} px-5 py-3.5 flex items-center justify-between`}>
-                    <div className="flex items-center gap-3">
-                      <div className={`h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${i === 0 ? "bg-outline/20 text-on-surface-variant" : "bg-white text-primary shadow-sm"}`}>
-                        {i + 1}
+            {/* Action Plan */}
+            <div className="p-8 rounded-xl bg-white gov-shadow navy-border-left">
+              <h2 className="text-xl font-black text-primary mb-6">Step-by-Step Action Plan</h2>
+              <div className="flex flex-col gap-4">
+                {result.procedural_requirements?.verification_steps?.length > 0 ? (
+                  result.procedural_requirements.verification_steps.map((step, index) => (
+                    <div key={index} className="flex gap-6 p-6 rounded-xl bg-surface border border-border">
+                      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-black shadow-md shadow-primary/20">
+                        {index + 1}
                       </div>
-                      <span className={`text-sm ${node.text}`}>{node.label}</span>
+                      <p className="text-text-main font-medium leading-relaxed self-center">{step}</p>
                     </div>
-                    {i < arr.length - 1 && (
-                      <span className="material-symbols-outlined text-outline text-[18px]">expand_more</span>
-                    )}
-                    {i === arr.length - 1 && (
-                      <span className="material-symbols-outlined text-tertiary text-[18px]">check_circle</span>
-                    )}
-                  </div>
-                  {i < arr.length - 1 && (
-                    <div className="h-5 w-px bg-outline/30" />
-                  )}
-                </div>
-              ))}
+                  ))
+                ) : (
+                  <p className="text-text-muted italic">No specific steps found.</p>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Voice button */}
-      <div className="mx-auto w-full max-w-7xl">
-        <div className="bg-white shadow-lg border border-outline/10 flex flex-col md:flex-row items-center justify-between gap-6 rounded-2xl px-8 py-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
-          <div>
-            <p className="text-base font-bold text-on-background font-headline flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">record_voice_over</span>
-              Voice Guidance Available
-            </p>
-            <p className="text-sm text-secondary mt-1">Hear this summary read aloud in your language</p>
           </div>
-          <div className="flex items-center gap-4 z-10">
-            <select className="rounded-full border border-outline/30 bg-surface px-4 py-2.5 text-sm font-medium text-on-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer w-32 md:w-auto">
-              <option>English</option>
-              <option>Hindi</option>
-              <option>Tamil</option>
-            </select>
-            <button className="flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-white hover:bg-primary/90 transition-all shadow-md shadow-primary/20 whitespace-nowrap">
-              <span className="material-symbols-outlined text-[18px]">play_arrow</span>
-              Read Aloud
-            </button>
-          </div>
-        </div>
-      </div>
 
+          {/* Right Column (40%) */}
+          <div className="w-full lg:w-[40%] flex flex-col gap-8">
+            
+            {/* Authority Card */}
+            <div className="p-8 rounded-xl bg-primary text-white shadow-xl shadow-primary/20">
+              <div className="flex items-center gap-3 mb-6">
+                <Building2 className="w-5 h-5 text-secondary" />
+                <h2 className="text-[10px] font-black uppercase tracking-widest opacity-70">Issuing Authority</h2>
+              </div>
+              <div className="p-6 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
+                <p className="text-white font-black text-xl leading-snug">
+                  {result.document_identity?.issuing_authority || "Unknown Entity"}
+                </p>
+                <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mt-3">{result.document_identity?.department}</p>
+              </div>
+              
+              {result.contact_information?.helpline && (
+                 <div className="flex items-center gap-3 text-sm text-white/50 p-4 bg-black/10 rounded-lg">
+                   <strong>Helpline:</strong> <span className="text-white font-bold">{result.contact_information.helpline}</span>
+                 </div>
+              )}
+            </div>
+
+            {/* Flowchart Card */}
+            <div className="p-8 rounded-xl bg-white gov-shadow border-t-4 border-primary flex-grow min-h-[500px]">
+              <div className="flex justify-between items-center mb-10">
+                <h2 className="text-xl font-black text-primary">Process Flow</h2>
+                <div className="px-3 py-1 bg-surface text-[10px] text-primary font-black uppercase rounded border border-border">Interactive</div>
+              </div>
+              <div 
+                ref={mermaidRef} 
+                className="mermaid w-full bg-surface rounded-xl p-8 overflow-auto flex justify-center text-primary border border-border/50"
+              >
+              </div>
+            </div>
+
+            {/* Legal Consequences */}
+            {result.legal_consequences && (
+              <div className="p-6 rounded-xl bg-red-50 border-l-[6px] border-red-600">
+                <h3 className="text-[10px] font-black text-red-700 uppercase tracking-widest mb-3">Notice of Penalty</h3>
+                <p className="text-sm text-red-900 leading-relaxed font-bold italic">{result.legal_consequences.non_payment_penalty}</p>
+              </div>
+            )}
+            
+          </div>
+      </div>
     </div>
-  );
+  </div>
+);
 }

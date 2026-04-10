@@ -1,0 +1,7 @@
+{
+  "name": "CivilEase",
+  "description": "AI-Powered Government Procedure Simplification & Visual Guidance System for Indian Citizens.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
