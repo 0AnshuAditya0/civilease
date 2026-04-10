@@ -35,10 +35,10 @@ export default function Navbar() {
         </div>
         
         <div className="hidden md:flex gap-10 items-center">
-          <Link className="text-primary font-bold border-b-2 border-secondary pb-1 font-headline text-sm uppercase tracking-widest" href="#">Platform</Link>
-          <Link className="text-text-muted hover:text-primary transition-colors font-headline text-sm uppercase tracking-widest" href="#">Solutions</Link>
-          <Link className="text-text-muted hover:text-primary transition-colors font-headline text-sm uppercase tracking-widest" href="#">Governance</Link>
-          <Link className="text-text-muted hover:text-primary transition-colors font-headline text-sm uppercase tracking-widest" href="#">Resources</Link>
+          <Link className="text-primary font-bold hover:text-secondary border-b-2 border-secondary pb-1 font-headline text-sm uppercase tracking-widest transition-all" href="/">Platform</Link>
+          <Link className="text-text-muted hover:text-primary transition-colors font-headline text-sm uppercase tracking-widest" href="/solutions">Solutions</Link>
+          <Link className="text-text-muted hover:text-primary transition-colors font-headline text-sm uppercase tracking-widest" href="/governance">Governance</Link>
+          <Link className="text-text-muted hover:text-primary transition-colors font-headline text-sm uppercase tracking-widest" href="/resources">Resources</Link>
         </div>
 
         <div className="hidden md:flex gap-4 items-center">

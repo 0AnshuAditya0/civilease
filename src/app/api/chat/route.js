@@ -5,7 +5,7 @@ const hf = new HfInference(process.env.HF_TOKEN || "");
 
 export async function POST(request) {
   try {
-    const { message, documentContext, history } = await request.json();
+    const { message, documentContext, history, language } = await request.json();
 
     if (!process.env.HF_TOKEN) {
       return NextResponse.json({ reply: "API configuration missing. Please check HF_TOKEN." }, { status: 500 });
@@ -13,8 +13,11 @@ export async function POST(request) {
 
     const systemPrompt = `You are CivilEase, a helpful and authoritative AI assistant for Indian citizens. 
 Context of current document: ${documentContext || "No document uploaded yet."}
-Answer the user's questions about government procedures, legal notices, and compliance clearly and politely in plain language. If the user greets you, greet them back warmly as "Namaste". 
-Keep responses concise and informative.`;
+Answer the user's questions about government procedures, legal notices, and compliance clearly and politely in plain language. 
+
+IMPORTANT: You MUST ONLY respond in ${language || "English"}. 
+If greeting the user, say "Namaste" if appropriate for the language.
+Every sentence must be written in ${language || "English"} script.`;
 
     const chatHistory = history.map(h => ({
       role: h.role,

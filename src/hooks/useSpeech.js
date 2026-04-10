@@ -11,33 +11,32 @@ export function useSpeech() {
     };
   }, []);
 
-  const stop = useCallback(() => {
+  const speak = (text, speechCode) => {
     window.speechSynthesis.cancel();
-    setSpeaking(false);
-  }, []);
-
-  const speak = useCallback((text, speechCode) => {
-    if (!window.speechSynthesis) return;
-
-    // Stop it first if it's already speaking
-    window.speechSynthesis.cancel();
-
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = speechCode;
-    
-    // Attempt to find a voice matching the language
-    const voices = window.speechSynthesis.getVoices();
-    const voice = voices.find(v => v.lang.startsWith(speechCode));
-    if (voice) {
-      utterance.voice = voice;
+
+    const trySpeak = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const match = voices.find(v => v.lang.startsWith(speechCode.split('-')[0]));
+      if (match) utterance.voice = match;
+      utterance.onstart = () => setSpeaking(true);
+      utterance.onend = () => setSpeaking(false);
+      utterance.onerror = () => setSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = trySpeak;
+    } else {
+      trySpeak();
     }
+  };
 
-    utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
-  }, []);
+  const stop = () => {
+    window.speechSynthesis.cancel();
+    setSpeaking(false);
+  };
 
   return { speaking, speak, stop };
 }

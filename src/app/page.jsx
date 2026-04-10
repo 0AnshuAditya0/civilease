@@ -44,7 +44,7 @@ export default function Home() {
             <div className="relative z-10 w-[550px] h-[550px] flex items-center justify-center">
               {/* Primary 3D Image */}
               <img 
-                src="/gov_3d_isometric_building_1775832310755.png" 
+                src="/hero-building.png" 
                 alt="Government Civil Infrastructure" 
                 className="w-[450px] h-[450px] object-contain relative z-20 animate-float"
               />

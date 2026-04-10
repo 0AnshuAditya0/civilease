@@ -46,7 +46,7 @@ Rules for extraction:
   "procedural_requirements": {
     "mandatory_documents": ["string"],
     "optional_documents": ["string"],
-    "verification_steps": ["step 1"],
+    "verification_steps": ["step (max 15 words)"],
     "physical_visit_required": false,
     "visit_location": "string",
     "estimated_processing_time": "string"
@@ -64,8 +64,12 @@ Rules for extraction:
   },
   "simplified_summary": "plain language summary",
   "language": "${language}",
-  "mermaid": "valid mermaid.js flowchart showing the user's journey. Do not use markdown inside."
+  "mermaid": "valid mermaid.js flowchart. Rules: 1. Use short text. 2. ALWAYS wrap node labels in double quotes like A[\"Label\"]. 3. Do not use markdown inside."
 }
+IMPORTANT: You MUST respond entirely in ${language}. 
+Every single field in the JSON — summary, steps, documents_required, authority — 
+must be written in ${language} script. 
+Do not use English at all if the language is not English.
 IMPORTANT: DO NOT use markdown code blocks like \`\`\`json. Return raw JSON text only.
 
 Document text to analyze:
@@ -79,24 +83,18 @@ ${text}
       model: "Qwen/Qwen2.5-72B-Instruct",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 2000,
-      temperature: 0.2
+      temperature: 0.4
     });
 
     let responseText = response.choices[0].message.content;
     
-    // Clean up typical model artifact padding
-    responseText = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
-    
-    // Find the first { and last } in case it added conversational padding
-    const firstBrace = responseText.indexOf('{');
-    const lastBrace = responseText.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1) {
-       responseText = responseText.substring(firstBrace, lastBrace + 1);
-    }
+    // Safer JSON Parser
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No JSON found in response");
     
     let parsed;
     try {
-      parsed = JSON.parse(responseText);
+      parsed = JSON.parse(jsonMatch[0]);
     } catch (parseError) {
       console.error("AI returned malformed data:", responseText);
       return NextResponse.json({ success: false, error: "The AI returned malformed data. Please try again." }, { status: 500 });

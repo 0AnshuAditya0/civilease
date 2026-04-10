@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { MessageSquare, X, Send } from "lucide-react";
 
@@ -10,6 +10,14 @@ export function ChatAssistant({ documentContext = "" }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowHint(true);
+    }, 25000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Hide the global layout instance if we are on the document page
   // The document page explicitly renders its own instance with the documentContext prop
@@ -37,7 +45,8 @@ export function ChatAssistant({ documentContext = "" }) {
         body: JSON.stringify({
           message: userMessage.content,
           documentContext,
-          history: currentHistory
+          history: currentHistory,
+          language: JSON.parse(localStorage.getItem("selectedLanguage"))?.value || "English"
         }),
       });
 
@@ -120,10 +129,33 @@ export function ChatAssistant({ documentContext = "" }) {
         </div>
       )}
 
+      {/* Hint Pop-up */}
+      {showHint && !isOpen && (
+        <div className="absolute bottom-[70px] right-0 mb-2 w-48 bg-secondary text-white p-3 rounded-xl shadow-xl animate-float text-xs font-bold transition-all">
+          <div className="relative">
+            Hey! Need any help with this document?
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowHint(false);
+              }}
+              className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-secondary flex items-center justify-center border border-secondary"
+            >
+              <X className="w-2.5 h-2.5" />
+            </button>
+            {/* Arrow */}
+            <div className="absolute -bottom-4 right-6 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-secondary"></div>
+          </div>
+        </div>
+      )}
+
       {/* Floating Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-secondary text-primary flex items-center justify-center shadow-lg hover:bg-opacity-90"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setShowHint(false);
+        }}
+        className="w-14 h-14 rounded-full bg-secondary text-primary flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-transform active:scale-95"
       >
         {isOpen ? <X className="w-7 h-7" /> : <MessageSquare className="w-7 h-7 text-primary" />}
       </button>

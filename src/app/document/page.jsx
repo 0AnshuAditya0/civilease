@@ -63,6 +63,10 @@ export default function DocumentResultPage() {
     );
   }
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   const handleSpeak = () => {
     if (speaking) {
       stop();
@@ -77,62 +81,129 @@ export default function DocumentResultPage() {
 
   return (
     <>
-    <div className="min-h-screen bg-surface py-12 px-8 overflow-y-auto">
+    {/* Global Print Styles */}
+    <style dangerouslySetInnerHTML={{ __html: `
+      @media print {
+        .no-print { display: none !important; }
+        body { background: white !important; }
+        .gov-shadow { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+        .min-h-screen { min-h: auto !important; height: auto !important; padding: 0 !important; }
+        .max-w-7xl { max-width: 100% !important; margin: 0 !important; }
+        .flex { display: block !important; }
+        .lg\\:w-\\[60\\%\\] { width: 100% !important; }
+        .lg\\:w-\\[40\\%\\] { width: 100% !important; margin-top: 2rem; }
+        .pb-32 { padding-bottom: 0 !important; }
+        .py-12 { padding-top: 2rem !important; }
+      }
+    `}} />
+
+    <div className="min-h-screen bg-surface py-12 px-8 overflow-y-auto print-container">
       <div className="max-w-7xl mx-auto pb-32">
         
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 bg-white p-8 rounded-xl gov-shadow border-b-4 border-secondary">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-               <button onClick={() => router.push("/")} className="text-primary hover:text-secondary"><ArrowLeft className="w-6 h-6" /></button>
-               <h1 className="text-4xl font-black text-primary tracking-tight">Analysis Result</h1>
+        {/* Expanded Header Section */}
+        <div className="mb-12 bg-white rounded-2xl gov-shadow border-b-8 border-secondary relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/2 no-print"></div>
+          
+          <div className="p-10 md:p-14 relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+              <div className="flex-1">
+                <div className="flex items-center gap-4 mb-4">
+                  <button onClick={() => router.push("/")} className="p-2 bg-surface text-primary rounded-full hover:bg-primary hover:text-white no-print transition-all"><ArrowLeft className="w-6 h-6" /></button>
+                  <span className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded">Analysis Report v2.1</span>
+                </div>
+                <h1 className="text-6xl md:text-7xl font-black text-primary tracking-tighter uppercase font-headline mb-4 leading-none">
+                  Document <br/> Simplified.
+                </h1>
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-success/10 rounded-full border border-success/20">
+                    <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                    <span className="text-success text-[10px] font-black uppercase tracking-widest leading-none">AI Verified Resolution</span>
+                  </div>
+                  <p className="text-text-muted font-bold uppercase text-[10px] tracking-[0.2em] border-l border-border pl-4">
+                    Extracted from {result.document_identity?.department || "Official Registry"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4 no-print min-w-[240px]">
+                 <button 
+                   onClick={handlePrint}
+                   className="flex items-center justify-center gap-4 w-full px-8 py-4 bg-secondary text-white rounded-xl font-black text-xs uppercase tracking-[0.2em] hover:bg-secondary/90 transition-all shadow-2xl shadow-secondary/20 hover:-translate-y-1"
+                 >
+                    Download Report
+                 </button>
+                 <button
+                   onClick={handleSpeak}
+                   className={`flex items-center justify-center gap-4 w-full px-8 py-4 rounded-xl font-black text-xs uppercase tracking-[0.1em] transition-all border-2 border-primary ${
+                     speaking ? "bg-primary text-white" : "bg-white text-primary hover:bg-surface"
+                   }`}
+                 >
+                   {speaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                   {speaking ? "Stop Narration" : "Listen in " + (selectedLang?.label || "Voice")}
+                 </button>
+              </div>
             </div>
-            <p className="text-text-muted font-medium ml-9 uppercase text-[10px] tracking-[0.2em]">Official Government Document Breakdown</p>
-          </div>
-          <div className="flex gap-4">
-             <button
-               onClick={handleSpeak}
-               className={`flex items-center gap-3 px-8 py-3 rounded-md font-bold text-white transition-all shadow-lg ${
-                 speaking ? "bg-primary" : "bg-secondary"
-               }`}
-             >
-               {speaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-               {speaking ? (selectedLang?.value === "English" ? "Stop" : "रुकें") : (selectedLang?.listenLabel || "Listen")}
-             </button>
-             <button className="p-3 bg-white border-2 border-primary text-primary rounded-md hover:bg-surface transition-all">
-                <Share2 className="w-5 h-5" />
-             </button>
+
+            {/* Content Carrying Meta Bar */}
+            <div className="mt-12 pt-10 border-t border-border/50 grid grid-cols-2 md:grid-cols-4 gap-8">
+               <div className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-text-muted tracking-widest">Document Type</span>
+                  <p className="text-primary font-black text-sm uppercase">{result.document_identity?.document_type || "Government Notice"}</p>
+               </div>
+               <div className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-text-muted tracking-widest">Ref Number</span>
+                  <p className="text-primary font-black text-sm">{result.document_identity?.reference_number?.slice(0, 20) || "N/A"}</p>
+               </div>
+               <div className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-text-muted tracking-widest">Effective Date</span>
+                  <p className="text-primary font-black text-sm">{result.document_identity?.issue_date || "N/A"}</p>
+               </div>
+               <div className="space-y-1">
+                  <span className="text-[10px] font-black uppercase text-text-muted tracking-widest">Jurisdiction</span>
+                  <p className="text-primary font-black text-sm uppercase">{result.document_identity?.jurisdiction || "National"}</p>
+               </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-10">
           
           {/* Left Column (60%) */}
-          <div className="w-full lg:w-[60%] flex flex-col gap-8">
+          <div className="w-full lg:w-[60%] flex flex-col gap-10">
             
             {/* Summary Card */}
-            <div className="p-8 rounded-xl bg-white gov-shadow navy-border-left">
-              <h2 className="text-xl font-black text-primary mb-5 flex items-center gap-3">
-                <div className="w-2 h-6 bg-secondary rounded-full"></div>
-                Executive Summary
-              </h2>
-              <p className="text-text-main leading-relaxed text-lg">
+            <div className="p-10 md:p-14 rounded-xl bg-white gov-shadow relative border-l-[16px] border-primary">
+              <div className="flex justify-between items-start mb-8">
+                <h2 className="text-3xl font-black text-primary uppercase tracking-tighter flex items-center gap-4">
+                   Insight Summary
+                </h2>
+                <div className="hidden md:flex flex-col items-end opacity-40 uppercase text-[9px] font-bold tracking-widest">
+                   <span>Document ID</span>
+                   <span className="text-primary font-black">{result.document_identity?.reference_number || "CE-" + Math.random().toString(36).substr(2, 6).toUpperCase()}</span>
+                </div>
+              </div>
+              <p className="text-text-main leading-relaxed text-xl font-medium font-body bg-surface/30 p-6 rounded-lg border border-border/50">
                 {result.simplified_summary || "Could not generate summary."}
               </p>
             </div>
 
             {/* Application Requirements */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* Documents Required */}
-              <div className="p-8 rounded-xl bg-white gov-shadow border-t-4 border-primary">
-                <h2 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
-                   <FileText className="w-5 h-5 text-secondary" /> Required Documents
-                </h2>
+              <div className="p-8 rounded-xl bg-white gov-shadow border-t-8 border-primary">
+                <div className="flex items-center justify-between mb-8">
+                   <h2 className="text-md font-black text-primary uppercase tracking-widest flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-secondary" /> Required Docs
+                   </h2>
+                   <span className="text-[10px] font-bold text-text-muted">{result.procedural_requirements?.mandatory_documents?.length || 0} ITEMS</span>
+                </div>
                 <ul className="flex flex-col gap-4">
                   {result.procedural_requirements?.mandatory_documents?.map((doc, index) => (
-                    <li key={index} className="flex items-start gap-3 p-4 rounded-lg bg-surface border border-border">
-                      <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                      <span className="text-text-main text-sm font-medium">{doc}</span>
+                    <li key={index} className="flex items-start gap-4 p-5 rounded-lg bg-surface border border-border/60 hover:border-primary/30 transition-colors">
+                      <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                         <CheckCircle2 className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-text-main text-sm font-bold leading-tight">{doc}</span>
                     </li>
                   ))}
                 </ul>
@@ -140,18 +211,21 @@ export default function DocumentResultPage() {
 
               {/* Financials */}
               {result.monetary_elements && (
-                <div className="p-8 rounded-xl bg-white gov-shadow border-t-4 border-secondary">
-                  <h2 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
-                     <AlertCircle className="w-5 h-5 text-secondary" /> Financial Obligations
+                <div className="p-8 rounded-xl bg-white gov-shadow border-t-8 border-secondary relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-2 opacity-5">
+                     <span className="material-symbols-outlined text-6xl">payments</span>
+                  </div>
+                  <h2 className="text-md font-black text-primary uppercase tracking-widest mb-8 flex items-center gap-3">
+                     <AlertCircle className="w-5 h-5 text-secondary" /> Financial Analysis
                   </h2>
-                  <div className="space-y-4">
-                    <div className="p-4 rounded-lg bg-surface border border-border flex justify-between items-center">
-                      <span className="text-text-muted text-[10px] font-black uppercase tracking-wider">Demand</span>
-                      <span className="text-primary font-black text-xl">{result.monetary_elements.currency} {result.monetary_elements.amount_demand}</span>
+                  <div className="space-y-6">
+                    <div className="p-6 rounded-lg bg-primary text-white shadow-inner">
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-60 block mb-2">Total Demand</span>
+                      <span className="font-black text-3xl">{result.monetary_elements.currency} {result.monetary_elements.amount_demand?.toLocaleString()}</span>
                     </div>
-                    <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20 flex justify-between items-center text-secondary">
-                      <span className="text-[10px] font-black uppercase tracking-wider">Deadline</span>
-                      <span className="font-black text-sm">{result.monetary_elements.payment_deadline || "N/A"}</span>
+                    <div className="p-5 rounded-lg bg-red-50 border border-red-100 flex justify-between items-center text-red-700">
+                      <span className="text-[10px] font-black uppercase tracking-wider">Maturity Date</span>
+                      <span className="font-black text-sm">{result.monetary_elements.payment_deadline || "Not Specified"}</span>
                     </div>
                   </div>
                 </div>
@@ -159,20 +233,21 @@ export default function DocumentResultPage() {
             </div>
 
             {/* Action Plan */}
-            <div className="p-8 rounded-xl bg-white gov-shadow navy-border-left">
-              <h2 className="text-xl font-black text-primary mb-6">Step-by-Step Action Plan</h2>
-              <div className="flex flex-col gap-4">
+            <div className="p-10 rounded-xl bg-white gov-shadow border-l-[12px] border-secondary">
+              <h2 className="text-2xl font-black text-primary mb-10 uppercase tracking-tight">Compliance Action Plan</h2>
+              <div className="space-y-4">
                 {result.procedural_requirements?.verification_steps?.length > 0 ? (
                   result.procedural_requirements.verification_steps.map((step, index) => (
-                    <div key={index} className="flex gap-6 p-6 rounded-xl bg-surface border border-border">
-                      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-black shadow-md shadow-primary/20">
+                    <div key={index} className="flex gap-8 p-8 rounded-xl bg-surface border border-border/80 relative overflow-hidden group hover:bg-white transition-all">
+                      <div className="absolute top-0 left-0 bottom-0 w-1 bg-primary group-hover:w-2 transition-all"></div>
+                      <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded bg-primary text-white font-black text-xl shadow-lg shadow-primary/20">
                         {index + 1}
                       </div>
-                      <p className="text-text-main font-medium leading-relaxed self-center">{step}</p>
+                      <p className="text-text-main font-bold text-lg leading-relaxed self-center">{step}</p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-text-muted italic">No specific steps found.</p>
+                  <p className="text-text-muted italic">No specific steps identified.</p>
                 )}
               </div>
             </div>
@@ -180,54 +255,68 @@ export default function DocumentResultPage() {
           </div>
 
           {/* Right Column (40%) */}
-          <div className="w-full lg:w-[40%] flex flex-col gap-8">
+          <div className="w-full lg:w-[40%] flex flex-col gap-10">
             
             {/* Authority Card */}
-            <div className="p-8 rounded-xl bg-primary text-white shadow-xl shadow-primary/20">
-              <div className="flex items-center gap-3 mb-6">
-                <Building2 className="w-5 h-5 text-secondary" />
-                <h2 className="text-[10px] font-black uppercase tracking-widest opacity-70">Issuing Authority</h2>
+            <div className="p-10 rounded-xl bg-primary text-white shadow-2xl shadow-primary/40 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-secondary"></div>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-2 bg-white/10 rounded-lg">
+                   <Building2 className="w-6 h-6 text-secondary" />
+                </div>
+                <h2 className="text-[11px] font-black uppercase tracking-[0.25em] opacity-80">Verified Issuing Entity</h2>
               </div>
-              <div className="p-6 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 mb-4">
-                <p className="text-white font-black text-xl leading-snug">
-                  {result.document_identity?.issuing_authority || "Unknown Entity"}
+              <div className="p-8 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 mb-6 group cursor-default">
+                <p className="text-white font-black text-2xl leading-tight mb-4 group-hover:text-secondary transition-colors">
+                  {result.document_identity?.issuing_authority || "Authority Identification Missing"}
                 </p>
-                <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mt-3">{result.document_identity?.department}</p>
+                <div className="h-px w-full bg-white/10 mb-4"></div>
+                <p className="text-white/50 text-[10px] font-black uppercase tracking-widest">{result.document_identity?.department || "General Registry"}</p>
               </div>
               
-              {result.contact_information?.helpline && (
-                 <div className="flex items-center gap-3 text-sm text-white/50 p-4 bg-black/10 rounded-lg">
-                   <strong>Helpline:</strong> <span className="text-white font-bold">{result.contact_information.helpline}</span>
+              <div className="grid grid-cols-2 gap-4">
+                 <div className="p-4 bg-black/20 rounded-lg">
+                    <span className="text-[8px] font-black uppercase text-white/40 block mb-1">Jurisdiction</span>
+                    <span className="text-xs font-bold text-white uppercase">{result.document_identity?.jurisdiction || "National"}</span>
                  </div>
-              )}
+                 <div className="p-4 bg-black/20 rounded-lg">
+                    <span className="text-[8px] font-black uppercase text-white/40 block mb-1">Reference</span>
+                    <span className="text-xs font-bold text-white">{result.document_identity?.reference_number?.slice(0, 10) || "N/A"}..</span>
+                 </div>
+              </div>
             </div>
 
             {/* Flowchart Card */}
-            <div className="p-8 rounded-xl bg-white gov-shadow border-t-4 border-primary flex-grow min-h-[500px]">
+            <div className="p-10 rounded-xl bg-white gov-shadow border-t-8 border-primary flex-grow min-h-[500px] flex flex-col">
               <div className="flex justify-between items-center mb-10">
-                <h2 className="text-xl font-black text-primary">Process Flow</h2>
-                <div className="px-3 py-1 bg-surface text-[10px] text-primary font-black uppercase rounded border border-border">Interactive</div>
+                <h2 className="text-xl font-black text-primary uppercase tracking-tight">Interactive Journey Map</h2>
+                <div className="px-3 py-1 bg-success text-[9px] text-white font-black uppercase rounded shadow-md">Stable Node</div>
               </div>
               <div 
                 ref={mermaidRef} 
-                className="mermaid w-full bg-surface rounded-xl p-8 overflow-auto flex justify-center text-primary border border-border/50"
+                className="mermaid w-full bg-surface rounded-xl p-8 overflow-auto flex-grow flex justify-center text-primary border border-border/50 shadow-inner"
               >
               </div>
             </div>
 
-            {/* Legal Consequences */}
-            {result.legal_consequences && (
-              <div className="p-6 rounded-xl bg-red-50 border-l-[6px] border-red-600">
-                <h3 className="text-[10px] font-black text-red-700 uppercase tracking-widest mb-3">Notice of Penalty</h3>
-                <p className="text-sm text-red-900 leading-relaxed font-bold italic">{result.legal_consequences.non_payment_penalty}</p>
-              </div>
-            )}
+            {/* Document Verification Stamp */}
+            <div className="p-10 rounded-xl bg-secondary/5 border-2 border-dashed border-secondary/30 flex flex-col items-center text-center">
+               <div className="w-20 h-20 rounded-full border-[6px] border-secondary/20 flex items-center justify-center mb-6 opacity-40">
+                  <span className="material-symbols-outlined text-5xl text-secondary">verified_user</span>
+               </div>
+               <h3 className="text-lg font-black text-primary uppercase tracking-tighter mb-2">Automated Verification</h3>
+               <p className="text-xs text-text-muted font-medium leading-relaxed">
+                  This report was generated using authenticated AI baseline analysis. For official legal filing, please consult a certified practitioner.
+               </p>
+            </div>
             
           </div>
+        </div>
       </div>
     </div>
-  </div>
-  <ChatAssistant documentContext={documentContextStr} />
-  </>
-);
+    <div className="no-print">
+       <ChatAssistant documentContext={documentContextStr} />
+    </div>
+    </>
+  );
 }
