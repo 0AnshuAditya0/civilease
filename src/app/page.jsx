@@ -46,18 +46,44 @@ export default function Home() {
               <img 
                 src="/gov_3d_isometric_building_1775832310755.png" 
                 alt="Government Civil Infrastructure" 
-                className="w-full h-full object-contain relative z-20 animate-float"
+                className="w-[450px] h-[450px] object-contain relative z-20 animate-float"
               />
               
-              {/* Floating Decorative Elements */}
-              <div className="absolute top-10 right-10 w-24 h-32 bg-white rounded-lg shadow-2xl border border-secondary/20 p-4 -rotate-12 animate-float-delayed z-30">
-                 <div className="w-full h-1 bg-secondary/20 rounded mb-2"></div>
-                 <div className="w-3/4 h-1 bg-secondary/10 rounded mb-2"></div>
+              {/* Floating Infrastructure/Civil Asset */}
+              <div className="absolute top-0 -left-10 w-32 h-32 bg-white rounded-2xl shadow-2xl border border-secondary/20 p-4 flex items-center justify-center animate-float-delayed z-30">
+                 <span className="material-symbols-outlined text-6xl text-primary opacity-20">architecture</span>
+                 <div className="absolute inset-0 flex flex-col p-4 justify-between">
+                    <div className="flex justify-between">
+                      <div className="w-2 h-2 rounded-full bg-secondary"></div>
+                      <div className="w-8 h-1 bg-primary/20 rounded"></div>
+                    </div>
+                    <div className="w-full h-1 bg-primary/10 rounded"></div>
+                 </div>
+              </div>
+
+              {/* Floating Blueprint Asset */}
+              <div className="absolute bottom-10 right-0 w-36 h-44 bg-white/90 backdrop-blur rounded-lg shadow-2xl border border-primary/20 p-5 rotate-12 animate-float z-30 overflow-hidden">
+                 <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+                 <div className="space-y-3 mt-2">
+                    <div className="w-full h-1 bg-primary/10 rounded"></div>
+                    <div className="w-3/4 h-1 bg-primary/10 rounded"></div>
+                    <div className="w-full h-1 bg-primary/10 rounded"></div>
+                    <div className="grid grid-cols-2 gap-2 pt-4">
+                       <div className="h-10 bg-secondary/10 rounded"></div>
+                       <div className="h-10 bg-primary/10 rounded"></div>
+                    </div>
+                 </div>
+              </div>
+              
+              {/* Document/Notice Overlay */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-4 w-24 h-32 bg-white rounded shadow-2xl border border-secondary/20 p-4 -rotate-6 animate-float-delayed z-40">
+                 <div className="w-full h-0.5 bg-secondary/40 rounded mb-1"></div>
+                 <div className="w-2/3 h-0.5 bg-secondary/20 rounded mb-1"></div>
                  <div className="mt-8 flex justify-center text-secondary">
                     <span className="material-symbols-outlined text-4xl">verified</span>
                  </div>
               </div>
-              
+
               <div className="absolute -bottom-5 -left-10 w-40 h-24 bg-primary rounded-xl shadow-2xl border border-white/20 p-4 rotate-6 animate-float z-10">
                  <div className="flex items-center gap-2 mb-3">
                    <div className="w-6 h-6 rounded-full bg-secondary"></div>

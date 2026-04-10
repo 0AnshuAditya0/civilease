@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGemini } from "@/hooks/useGemini";
 import { useSpeech } from "@/hooks/useSpeech";
@@ -13,15 +13,25 @@ export default function DocumentResultPage() {
   const { result } = useGemini();
   const { speaking, speak, stop } = useSpeech();
   const mermaidRef = useRef(null);
+  const [hasMounted, setHasMounted] = useState(false);
+  const [selectedLang, setSelectedLang] = useState(null);
 
   useEffect(() => {
-    if (!result) {
+    setHasMounted(true);
+    const stored = localStorage.getItem("selectedLanguage");
+    if (stored) {
+      setSelectedLang(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (hasMounted && !result) {
       router.push("/");
     }
-  }, [result, router]);
+  }, [result, router, hasMounted]);
 
   useEffect(() => {
-    if (result && result.mermaid && mermaidRef.current) {
+    if (hasMounted && result && result.mermaid && mermaidRef.current) {
       try {
         mermaid.initialize({ 
           startOnLoad: false, 
@@ -43,9 +53,9 @@ export default function DocumentResultPage() {
         console.error("Mermaid init error:", err);
       }
     }
-  }, [result]);
+  }, [result, hasMounted]);
 
-  if (!result) {
+  if (!hasMounted || !result) {
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center p-6">
         <div className="text-xl font-bold text-primary">Preparing Documentation...</div>
@@ -57,7 +67,9 @@ export default function DocumentResultPage() {
     if (speaking) {
       stop();
     } else {
-      speak(result.simplified_summary || "No summary available.", result.language || "English");
+      const text = result.simplified_summary || "No summary available.";
+      const code = selectedLang?.speechCode || "en-IN";
+      speak(text, code);
     }
   };
 
@@ -85,7 +97,7 @@ export default function DocumentResultPage() {
                }`}
              >
                {speaking ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-               {speaking ? "Stop Narration" : "Listen in " + result.language}
+               {speaking ? (selectedLang?.value === "English" ? "Stop" : "रुकें") : (selectedLang?.listenLabel || "Listen")}
              </button>
              <button className="p-3 bg-white border-2 border-primary text-primary rounded-md hover:bg-surface transition-all">
                 <Share2 className="w-5 h-5" />

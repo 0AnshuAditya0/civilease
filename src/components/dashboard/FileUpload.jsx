@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useGemini } from "@/hooks/useGemini";
 import { UploadCloud, FileText, Loader2 } from "lucide-react";
 
+import { SUPPORTED_LANGUAGES } from "@/lib/constants";
+
 export function FileUpload() {
   const router = useRouter();
   const { analyze, loading, error } = useGemini();
@@ -12,10 +14,8 @@ export function FileUpload() {
   const [mode, setMode] = useState("file"); // "file" or "text"
   const [textModeInput, setTextModeInput] = useState("");
   const [fileName, setFileName] = useState("");
-  const [language, setLanguage] = useState("English");
+  const [language, setLanguage] = useState(SUPPORTED_LANGUAGES[0].value);
   const [uploadingPdf, setUploadingPdf] = useState(false);
-
-  const languages = ["English", "Hindi", "Bengali", "Tamil"];
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -81,6 +81,9 @@ export function FileUpload() {
       alert("No text to analyze. Please upload a PDF or enter text.");
       return;
     }
+
+    const langObj = SUPPORTED_LANGUAGES.find(l => l.value === language);
+    localStorage.setItem("selectedLanguage", JSON.stringify(langObj));
 
     const success = await analyze(textModeInput, language);
     if (success) {
@@ -163,8 +166,8 @@ export function FileUpload() {
             onChange={(e) => setLanguage(e.target.value)}
             className="bg-white border border-border text-primary font-bold rounded-md px-4 py-2 text-xs focus:outline-none focus:border-primary appearance-none cursor-pointer"
           >
-            {languages.map((lang) => (
-              <option key={lang} value={lang}>{lang}</option>
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <option key={lang.value} value={lang.value}>{lang.label}</option>
             ))}
           </select>
         </div>

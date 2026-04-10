@@ -14,7 +14,7 @@ export async function analyzeDocument(text, language) {
   }
 
   const prompt = `
-You are SCivilEase, an AI expert in Indian government procedures.
+You are CivilEase, an AI expert in Indian government procedures.
 Analyze the following document and extract all relevant information into the specified JSON structure.
 
 Rules for extraction:

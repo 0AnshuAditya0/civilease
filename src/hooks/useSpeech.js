@@ -1,35 +1,43 @@
-import { useState } from "react";
+"use client";
 
-const LANGUAGE_MAP = {
-  English: "en-US",
-  Hindi: "hi-IN",
-  Bengali: "bn-IN",
-  Tamil: "ta-IN",
-};
+import { useState, useCallback, useEffect } from "react";
 
 export function useSpeech() {
   const [speaking, setSpeaking] = useState(false);
 
-  function speak(text, language) {
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
+  const stop = useCallback(() => {
+    window.speechSynthesis.cancel();
+    setSpeaking(false);
+  }, []);
+
+  const speak = useCallback((text, speechCode) => {
     if (!window.speechSynthesis) return;
 
+    // Stop it first if it's already speaking
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = LANGUAGE_MAP[language] || "en-US";
+    utterance.lang = speechCode;
+    
+    // Attempt to find a voice matching the language
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find(v => v.lang.startsWith(speechCode));
+    if (voice) {
+      utterance.voice = voice;
+    }
 
     utterance.onstart = () => setSpeaking(true);
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);
 
     window.speechSynthesis.speak(utterance);
-  }
-
-  function stop() {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    setSpeaking(false);
-  }
+  }, []);
 
   return { speaking, speak, stop };
 }
