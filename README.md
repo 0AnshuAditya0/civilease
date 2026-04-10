@@ -3,17 +3,16 @@
 CivilEase is an AI-powered administrative assistant designed to bridge the gap between complex government procedures and the everyday citizen. By leveraging advanced Large Language Models, it transforms dense legal notices, government forms, and official orders into plain-language summaries and actionable procedural maps.
 
 ![CivilEase Hero Section](./public/hero-screenshot.png)
-*(Image placeholder: Upload your hero section screenshot here)*
 
 ---
 
-## 🚀 Key Features
+##  Key Features
 
-*   **📄 AI Document Analysis:** Instantly simplify official PDFs or pasted document text.
-*   **🗺️ Interactive Journey Maps:** Visualizes complex bureaucratic paths as clear, step-by-step flowcharts using Mermaid.js.
-*   **🗣️ Multilingual Voice Guidance:** Integrated Web Speech API support for regional language narration (Hindi, Bengali, Telugu, Kannada, Tamil, etc.).
-*   **🔐 Digital Sovereignty:** Built with privacy-first principles following the DPDP norms, featuring "Fake Auth" UI for demonstration.
-*   **📄 Professional PDF Reports:** Generate clean, official document summaries for offline use.
+*   **AI Document Analysis:** Instantly simplify official PDFs or pasted document text.
+*   **Interactive Journey Maps:** Visualizes complex bureaucratic paths as clear, step-by-step flowcharts using Mermaid.js.
+*   **Multilingual Voice Guidance:** Integrated Web Speech API support for regional language narration (Hindi, Bengali, Telugu, Kannada, Tamil, etc.).
+*   **Digital Sovereignty:** Built with privacy-first principles following the DPDP norms, featuring "Fake Auth" UI for demonstration.
+*   **Professional PDF Reports:** Generate clean, official document summaries for offline use.
 
 ---
 
