@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useGemini } from "@/hooks/useGemini";
 import { UploadCloud, FileText, Loader2 } from "lucide-react";
 
 import { SUPPORTED_LANGUAGES } from "@/lib/constants";
 
-export function FileUpload() {
+export function FileUpload({ sampleText = "" }) {
   const router = useRouter();
   const { analyze, loading, error } = useGemini();
   const [isHovering, setIsHovering] = useState(false);
@@ -16,6 +16,14 @@ export function FileUpload() {
   const [fileName, setFileName] = useState("");
   const [language, setLanguage] = useState(SUPPORTED_LANGUAGES[0].value);
   const [uploadingPdf, setUploadingPdf] = useState(false);
+
+  // Handle incoming samples from the home page
+  useEffect(() => {
+    if (sampleText) {
+      setTextModeInput(sampleText);
+      setMode("text");
+    }
+  }, [sampleText]);
 
   const handleDragOver = (e) => {
     e.preventDefault();

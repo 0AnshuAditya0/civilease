@@ -22,7 +22,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
-            <div className="text-3xl font-black text-white mb-6 font-headline tracking-tight">CivicEase</div>
+            <div className="text-3xl font-black text-white mb-6 font-headline tracking-tight">CivilEase</div>
             <p className="text-white/70 max-w-xs leading-relaxed text-sm">
               An AI-powered initiative to simplify Indian government procedures and legal documents for every citizen.
             </p>
@@ -47,7 +47,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/10 pt-10 gap-6">
-          <div className="text-white/40 font-inter text-xs">© 2024 CivicEase. An AI Administrative Assistant.</div>
+          <div className="text-white/40 font-inter text-xs">© 2024 CivilEase. An AI Administrative Assistant.</div>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 items-center">
             <Link className="text-white/40 hover:text-white transition-colors font-inter text-xs" href="#">Privacy Policy</Link>
             <Link className="text-white/40 hover:text-white transition-colors font-inter text-xs" href="#">Terms</Link>

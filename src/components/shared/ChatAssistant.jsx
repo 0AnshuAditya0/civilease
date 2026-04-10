@@ -71,7 +71,7 @@ export function ChatAssistant({ documentContext = "" }) {
         <div className="mb-4 w-[400px] h-[500px] bg-white border border-border shadow-2xl flex flex-col rounded overflow-hidden">
           {/* Header */}
           <div className="bg-primary px-4 py-3 text-white flex justify-between items-center">
-            <span className="font-bold">CivicEase Assistant</span>
+            <span className="font-bold">CivilEase Assistant</span>
             <button 
               onClick={() => setIsOpen(false)} 
               className="text-white hover:text-gray-300"

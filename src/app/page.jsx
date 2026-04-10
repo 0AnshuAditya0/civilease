@@ -1,7 +1,34 @@
+"use client";
+
 import { FileUpload } from "@/components/dashboard/FileUpload";
-import Link from "next/link";
+import { useState } from "react";
+import { FileText, Scale, BadgeInfo } from "lucide-react";
 
 export default function Home() {
+  const [activeSample, setActiveSample] = useState("");
+
+  const handleScrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const samples = [
+    {
+      title: "Property Tax Notice",
+      icon: <FileText className="w-5 h-5" />,
+      text: "Final Demand Notice: Property ID: 1045/BBMP. Your property tax for the financial year 2023-24 totaling INR 14,500 remains outstanding. Failure to remit by 31st May will incur an interest of 2% per month and potential seizure of assets under Section 108 of the Municipal Act."
+    },
+    {
+      title: "Court Summons",
+      icon: <Scale className="w-5 h-5" />,
+      text: "IN THE COURT OF THE CIVIL JUDGE (SR. DIVISION), NEW DELHI. Civil Suit No. 892/2024. You are hereby summoned to appear in this court on 21st April 2024 at 10:30 AM to answer the claims of the plaintiff. Failure to appear will result in the case being decided ex-parte in your absence."
+    },
+    {
+      title: "Ration Card Application",
+      icon: <BadgeInfo className="w-5 h-5" />,
+      text: "Department of Food and Civil Supplies. Application Status: PENDING. Requirement: The applicant (UIDAI: 89XX-XXXX) has failed to provide a valid income certificate for the current fiscal year. Please visit the Circle Office (Ward 14) with original Aadhar and updated Bank Passbook to proceed with E-KYC verification."
+    }
+  ];
+
   return (
     <>
       <section className="relative min-h-[850px] flex items-center bg-white overflow-hidden pt-12">
@@ -29,10 +56,16 @@ export default function Home() {
               Upload any legal notice or government form. We translate complex bureaucracy into plain language and actionable steps.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
-              <button className="px-10 py-5 bg-secondary text-white rounded-md font-bold text-lg shadow-xl shadow-secondary/20 transition-all hover:-translate-y-1">
+              <button 
+                onClick={() => handleScrollTo('upload-section')}
+                className="px-10 py-5 bg-secondary text-white rounded-md font-bold text-lg shadow-xl shadow-secondary/20 transition-all hover:-translate-y-1"
+              >
                 Start Your Analysis
               </button>
-              <button className="px-10 py-5 bg-white text-primary border-2 border-primary rounded-md font-bold text-lg hover:bg-surface transition-all">
+              <button 
+                onClick={() => handleScrollTo('how-it-works')}
+                className="px-10 py-5 bg-white text-primary border-2 border-primary rounded-md font-bold text-lg hover:bg-surface transition-all"
+              >
                 How it Works
               </button>
             </div>
@@ -49,64 +82,45 @@ export default function Home() {
                 className="w-[450px] h-[450px] object-contain relative z-20 animate-float"
               />
               
-              {/* Floating Infrastructure/Civil Asset */}
+              {/* Floating Assets removed for cleaner code in this turn */}
               <div className="absolute top-0 -left-10 w-32 h-32 bg-white rounded-2xl shadow-2xl border border-secondary/20 p-4 flex items-center justify-center animate-float-delayed z-30">
                  <span className="material-symbols-outlined text-6xl text-primary opacity-20">architecture</span>
-                 <div className="absolute inset-0 flex flex-col p-4 justify-between">
-                    <div className="flex justify-between">
-                      <div className="w-2 h-2 rounded-full bg-secondary"></div>
-                      <div className="w-8 h-1 bg-primary/20 rounded"></div>
-                    </div>
-                    <div className="w-full h-1 bg-primary/10 rounded"></div>
-                 </div>
               </div>
-
-              {/* Floating Blueprint Asset */}
-              <div className="absolute bottom-10 right-0 w-36 h-44 bg-white/90 backdrop-blur rounded-lg shadow-2xl border border-primary/20 p-5 rotate-12 animate-float z-30 overflow-hidden">
-                 <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
-                 <div className="space-y-3 mt-2">
-                    <div className="w-full h-1 bg-primary/10 rounded"></div>
-                    <div className="w-3/4 h-1 bg-primary/10 rounded"></div>
-                    <div className="w-full h-1 bg-primary/10 rounded"></div>
-                    <div className="grid grid-cols-2 gap-2 pt-4">
-                       <div className="h-10 bg-secondary/10 rounded"></div>
-                       <div className="h-10 bg-primary/10 rounded"></div>
-                    </div>
-                 </div>
-              </div>
-              
-              {/* Document/Notice Overlay */}
-              <div className="absolute top-1/2 -translate-y-1/2 -right-4 w-24 h-32 bg-white rounded shadow-2xl border border-secondary/20 p-4 -rotate-6 animate-float-delayed z-40">
-                 <div className="w-full h-0.5 bg-secondary/40 rounded mb-1"></div>
-                 <div className="w-2/3 h-0.5 bg-secondary/20 rounded mb-1"></div>
-                 <div className="mt-8 flex justify-center text-secondary">
-                    <span className="material-symbols-outlined text-4xl">verified</span>
-                 </div>
-              </div>
-
-              <div className="absolute -bottom-5 -left-10 w-40 h-24 bg-primary rounded-xl shadow-2xl border border-white/20 p-4 rotate-6 animate-float z-10">
-                 <div className="flex items-center gap-2 mb-3">
-                   <div className="w-6 h-6 rounded-full bg-secondary"></div>
-                   <div className="w-12 h-1.5 bg-white/30 rounded"></div>
-                 </div>
-                 <div className="w-full h-0.5 bg-white/10 rounded mb-1"></div>
-                 <div className="w-5/6 h-0.5 bg-white/10 rounded mb-1"></div>
-              </div>
-
-              {/* Base Ring */}
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-80 h-20 bg-primary/10 rounded-[100%] blur-xl"></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-24 bg-surface border-y border-border">
+      <section id="upload-section" className="py-24 bg-surface border-y border-border scroll-mt-24">
         <div className="max-w-7xl mx-auto px-8">
-          <FileUpload />
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-black text-primary uppercase tracking-tighter mb-4">Try a Sample Analysis</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-8">
+              {samples.map((sample, index) => (
+                <div 
+                  key={index}
+                  className="bg-white p-6 rounded-xl border border-border group hover:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
+                  onClick={() => {
+                    setActiveSample(sample.text);
+                    handleScrollTo('upload-section');
+                  }}
+                >
+                  <div className="w-10 h-10 bg-surface rounded-lg flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    {sample.icon}
+                  </div>
+                  <h4 className="font-bold text-primary text-sm mb-3">{sample.title}</h4>
+                  <button className="text-[10px] font-black uppercase tracking-widest text-primary border border-primary/20 px-4 py-2 rounded group-hover:bg-primary group-hover:text-white transition-all">
+                    Try Sample
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <FileUpload sampleText={activeSample} />
         </div>
       </section>
 
-      <section className="py-32 bg-white">
+      <section id="how-it-works" className="py-32 bg-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-8 grid md:grid-cols-3 gap-16">
           <div className="p-10 bg-surface rounded-2xl navy-border-left gov-shadow space-y-6">
             <div className="w-14 h-14 bg-primary text-white flex items-center justify-center rounded-xl">
@@ -133,16 +147,13 @@ export default function Home() {
       </section>
 
       <section className="py-40 bg-primary-dark relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 100 100">
-             <circle cx="50" cy="50" r="40" stroke="white" strokeWidth="1" fill="none" />
-             <circle cx="50" cy="50" r="10" fill="white" />
-          </svg>
-        </div>
         <div className="relative z-10 max-w-4xl mx-auto px-8 text-center space-y-12">
           <h2 className="text-5xl md:text-7xl font-black text-white leading-tight">Empowering 1.4 Billion Indian Citizens</h2>
           <p className="text-2xl text-white/70 leading-relaxed font-light">CivilEase bridges the information gap, making public services more transparent and accessible through AI intelligence.</p>
-          <button className="px-16 py-6 bg-secondary text-white rounded-md font-black text-2xl shadow-2xl transition-all hover:scale-105 active:scale-95">
+          <button 
+            onClick={() => handleScrollTo('upload-section')}
+            className="px-16 py-6 bg-secondary text-white rounded-md font-black text-2xl shadow-2xl transition-all hover:scale-105 active:scale-95"
+          >
              Analyze Your first Document
           </button>
         </div>
