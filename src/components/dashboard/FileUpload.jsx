@@ -110,23 +110,39 @@ export function FileUpload({ sampleText = "" }) {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    let interval;
+    let timeout;
     if (loading) {
+      const getDelay = (step) => {
+        if (step === 0) return 3000;
+        if (step === 1) return 4000;
+        if (step === 2) return 6000;
+        if (step === 3) return language === "English" ? 3000 : 8000;
+        if (step === 4) return 5000;
+        return 100000; // Large delay for last step until done
+      };
+
+      const nextStep = (step) => {
+        if (step < loadingSteps.length - 1) {
+          timeout = setTimeout(() => {
+            setCurrentStep(step + 1);
+            nextStep(step + 1);
+          }, getDelay(step));
+        }
+      };
+
       setCurrentStep(0);
-      interval = setInterval(() => {
-        setCurrentStep((prev) => (prev < loadingSteps.length - 1 ? prev + 1 : prev));
-      }, 3000);
+      nextStep(0);
     } else {
       setCurrentStep(0);
-      if (interval) clearInterval(interval);
+      if (timeout) clearTimeout(timeout);
     }
     return () => {
-      if (interval) clearInterval(interval);
+      if (timeout) clearTimeout(timeout);
     };
-  }, [loading]);
+  }, [loading, language]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white rounded-xl p-8 gov-shadow gov-border relative z-30">
+    <div suppressHydrationWarning className="w-full max-w-2xl mx-auto bg-white rounded-xl p-8 gov-shadow gov-border relative z-30">
       
       {loading && (
         <div className="absolute inset-x-8 inset-y-8 bg-white z-50 flex flex-col items-center justify-center text-center">

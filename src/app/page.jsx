@@ -45,7 +45,7 @@ Issued by: Assistant Revenue Officer, Ward No. 34, Rajajinagar`
 
   return (
     <>
-      <section className="relative min-h-[850px] flex items-center bg-white overflow-hidden pt-12">
+      <section suppressHydrationWarning className="relative min-h-[850px] flex items-center bg-white overflow-hidden pt-12">
         <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
           <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
@@ -105,7 +105,7 @@ Issued by: Assistant Revenue Officer, Ward No. 34, Rajajinagar`
         </div>
       </section>
 
-      <section id="upload-section" className="py-24 bg-surface border-y border-border scroll-mt-24">
+      <section id="upload-section" suppressHydrationWarning className="py-24 bg-surface border-y border-border scroll-mt-24">
         <div className="max-w-7xl mx-auto px-8">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-black text-primary uppercase tracking-tighter mb-4">Try a Sample Analysis</h2>
@@ -134,7 +134,7 @@ Issued by: Assistant Revenue Officer, Ward No. 34, Rajajinagar`
         </div>
       </section>
 
-      <section id="how-it-works" className="py-32 bg-white scroll-mt-20">
+      <section id="how-it-works" suppressHydrationWarning className="py-32 bg-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-8 grid md:grid-cols-3 gap-16">
           <div className="p-10 bg-surface rounded-2xl navy-border-left gov-shadow space-y-6">
             <div className="w-14 h-14 bg-primary text-white flex items-center justify-center rounded-xl">
@@ -160,7 +160,7 @@ Issued by: Assistant Revenue Officer, Ward No. 34, Rajajinagar`
         </div>
       </section>
 
-      <section className="py-40 bg-primary-dark relative overflow-hidden">
+      <section suppressHydrationWarning className="py-40 bg-primary-dark relative overflow-hidden">
         <div className="relative z-10 max-w-4xl mx-auto px-8 text-center space-y-12">
           <h2 className="text-5xl md:text-7xl font-black text-white leading-tight">Empowering 1.4 Billion Indian Citizens</h2>
           <p className="text-2xl text-white/70 leading-relaxed font-light">CivilEase bridges the information gap, making public services more transparent and accessible through AI intelligence.</p>
