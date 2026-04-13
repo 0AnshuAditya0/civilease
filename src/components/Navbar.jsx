@@ -8,6 +8,26 @@ export default function Navbar({ onSignInClick, user, onSignOut }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
+  const isActive = (path) => {
+    if (path === "/") return pathname === "/";
+    return pathname?.startsWith(path);
+  };
+
+  const getLinkClass = (path) => {
+    const base = "font-headline text-sm uppercase tracking-widest transition-all";
+    if (isActive(path)) {
+      return `${base} text-primary font-bold hover:text-secondary border-b-2 border-secondary pb-1`;
+    }
+    return `${base} text-text-muted hover:text-primary border-b-2 border-transparent pb-1`;
+  };
+
+  const navLinks = [
+    { href: "/", label: "Simplify" },
+    { href: "/fraud-check", label: "FraudShield" },
+    { href: "/solutions", label: "Solutions" },
+    { href: "/governance", label: "Governance" },
+    { href: "/resources", label: "Resources" }
+  ];
   const navLinks = [
     { name: "Platform", href: "/" },
     { name: "Solutions", href: "/solutions" },
@@ -54,6 +74,11 @@ export default function Navbar({ onSignInClick, user, onSignOut }) {
         </div>
         
         <div className="hidden md:flex gap-10 items-center">
+          {navLinks.map((link) => (
+            <Link key={link.href} className={getLinkClass(link.href)} href={link.href}>
+              {link.label}
+            </Link>
+          ))}
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -123,6 +148,16 @@ export default function Navbar({ onSignInClick, user, onSignOut }) {
       {open && (
         <div className="border-t border-border md:hidden bg-white">
           <div className="flex flex-col gap-4 px-8 py-6">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.href} 
+                className={`font-headline text-sm uppercase tracking-widest transition-colors ${isActive(link.href) ? "text-primary font-bold" : "text-text-muted hover:text-primary"}`} 
+                href={link.href}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
