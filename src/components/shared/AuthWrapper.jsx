@@ -1,18 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { ChatAssistant } from "@/components/shared/ChatAssistant";
 import AuthModal from "@/components/shared/AuthModal";
 
 export default function AuthWrapper({ children }) {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("civileaseUser");
-    if (saved) setUser(JSON.parse(saved));
-  }, []);
+  const [user, setUser] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("civileaseUser");
+      return saved ? JSON.parse(saved) : null;
+    }
+    return null;
+  });
 
   return (
     <>
