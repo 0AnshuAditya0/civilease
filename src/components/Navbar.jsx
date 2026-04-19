@@ -28,12 +28,6 @@ export default function Navbar({ onSignInClick, user, onSignOut }) {
     { href: "/governance", label: "Governance" },
     { href: "/resources", label: "Resources" }
   ];
-  const navLinks = [
-    { name: "Platform", href: "/" },
-    { name: "Solutions", href: "/solutions" },
-    { name: "Governance", href: "/governance" },
-    { name: "Resources", href: "/resources" }
-  ];
 
   const handleScrollTo = (id) => {
     const el = document.getElementById(id);
@@ -79,22 +73,7 @@ export default function Navbar({ onSignInClick, user, onSignOut }) {
               {link.label}
             </Link>
           ))}
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`transition-all font-headline text-sm uppercase tracking-widest pb-1 ${
-                  isActive 
-                    ? "text-primary font-black border-b-2 border-secondary" 
-                    : "text-text-muted font-bold hover:text-primary"
-                }`}
-              >
-                {link.name}
-              </Link>
-            );
-          })}
+
           <button 
             onClick={() => handleScrollTo('how-it-works')}
             className="text-text-muted hover:text-primary transition-colors font-headline text-sm uppercase tracking-widest font-bold"
@@ -158,21 +137,7 @@ export default function Navbar({ onSignInClick, user, onSignOut }) {
                 {link.label}
               </Link>
             ))}
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  onClick={() => setOpen(false)}
-                  href={link.href}
-                  className={`font-headline text-sm uppercase tracking-widest transition-all ${
-                    isActive ? "text-primary font-black ml-2" : "text-text-muted font-bold"
-                  }`}
-                >
-                  {isActive && "• "} {link.name}
-                </Link>
-              );
-            })}
+
             <button 
               onClick={() => handleScrollTo('how-it-works')}
               className="text-left font-headline text-sm uppercase tracking-widest font-bold text-text-muted"

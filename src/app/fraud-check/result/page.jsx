@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFraudCheck } from "@/hooks/useFraudCheck";
 import { ShieldAlert, ShieldCheck, ArrowLeft, AlertTriangle, Crosshair, HelpCircle, Activity } from "lucide-react";
@@ -8,19 +8,15 @@ import { ShieldAlert, ShieldCheck, ArrowLeft, AlertTriangle, Crosshair, HelpCirc
 export default function FraudResultPage() {
   const router = useRouter();
   const { fraudResult } = useFraudCheck();
-  const [hasMounted, setHasMounted] = useState(false);
+  const isClient = typeof window !== "undefined";
 
   useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (hasMounted && !fraudResult) {
+    if (!fraudResult) {
       router.push("/fraud-check");
     }
-  }, [fraudResult, router, hasMounted]);
+  }, [fraudResult, router]);
 
-  if (!hasMounted || !fraudResult) {
+  if (!isClient || !fraudResult) {
     return (
       <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-6">
         <div className="text-xl font-bold text-zinc-800 animate-pulse flex items-center gap-4">
@@ -113,7 +109,7 @@ export default function FraudResultPage() {
                                         <span className="text-[9px] font-black tracking-widest uppercase bg-red-200 text-red-800 px-2 py-0.5 rounded">{flag.severity}</span>
                                     </div>
                                     <p className="text-red-800/80 text-sm mb-2">{flag.description}</p>
-                                    <p className="text-xs text-red-900 bg-white p-2 rounded border border-red-100 italic">" {flag.evidence} "</p>
+                                    <p className="text-xs text-red-900 bg-white p-2 rounded border border-red-100 italic">&quot; {flag.evidence} &quot;</p>
                                 </div>
                             ))}
                         </div>
