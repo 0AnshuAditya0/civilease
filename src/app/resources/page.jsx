@@ -59,7 +59,7 @@ export default function ResourcesPage() {
                     </div>
                     <h2 className="text-3xl font-black uppercase tracking-tighter mb-6">Need Instant Support?</h2>
                     <p className="text-primary font-bold leading-relaxed mb-10 text-sm">
-                        Our knowledge base is expansive, but if you can't find what you need, our AI assistant is ready to parse your query in real-time.
+                        Our knowledge base is expansive, but if you can&apos;t find what you need, our AI assistant is ready to parse your query in real-time.
                     </p>
                     <button className="w-full bg-primary text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl">Contact Helpdesk</button>
                 </div>

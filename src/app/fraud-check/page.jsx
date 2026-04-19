@@ -1,5 +1,4 @@
 import { FraudUpload } from "@/components/dashboard/FraudUpload";
-import Link from "next/link";
 import { ShieldCheck, Crosshair, AlertTriangle } from "lucide-react";
 
 export default function FraudCheckHome() {
@@ -20,7 +19,7 @@ export default function FraudCheckHome() {
            </h1>
            
            <p className="text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto">
-             Don't fall victim to fraudulent government demands. Our AI agent forensically analyzes documents for authenticity markers, urgency manipulation, and financial threats.
+             Don&apos;t fall victim to fraudulent government demands. Our AI agent forensically analyzes documents for authenticity markers, urgency manipulation, and financial threats.
            </p>
         </div>
       </section>

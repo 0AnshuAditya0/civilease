@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGemini } from "@/hooks/useGemini";
 import { useSpeech } from "@/hooks/useSpeech";
-import { CheckCircle2, Building2, Volume2, VolumeX, ArrowLeft, FileText, AlertCircle, ExternalLink, Loader2, Landmark, Share2, Clock, Scale, X } from "lucide-react";
+import { CheckCircle2, Building2, Volume2, VolumeX, ArrowLeft, FileText, AlertCircle, ExternalLink, Loader2, Landmark, Clock, Scale, X } from "lucide-react";
 import mermaid from "mermaid";
 import { ChatAssistant } from "@/components/shared/ChatAssistant";
 import { GOV_PORTAL_LINKS } from "@/lib/constants";
@@ -34,28 +34,26 @@ export default function DocumentResultPage() {
 
   const relevantLinks = getRelevantPortals();
   const mermaidRef = useRef(null);
-  const [hasMounted, setHasMounted] = useState(false);
-  const [selectedLang, setSelectedLang] = useState(null);
+  const isClient = typeof window !== "undefined";
+  const [selectedLang] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("selectedLanguage");
+      return stored ? JSON.parse(stored) : null;
+    }
+    return null;
+  });
   const [isDownloading, setIsDownloading] = useState(false);
 
   const [selectedCase, setSelectedCase] = useState(null);
 
   useEffect(() => {
-    setHasMounted(true);
-    const stored = localStorage.getItem("selectedLanguage");
-    if (stored) {
-      setSelectedLang(JSON.parse(stored));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (hasMounted && !result) {
+    if (!result) {
       router.push("/");
     }
-  }, [result, router, hasMounted]);
+  }, [result, router]);
 
   useEffect(() => {
-    if (hasMounted && result && result.mermaid && mermaidRef.current) {
+    if (isClient && result && result.mermaid && mermaidRef.current) {
       try {
         mermaid.initialize({ 
           startOnLoad: false, 
@@ -77,9 +75,9 @@ export default function DocumentResultPage() {
         console.error("Mermaid init error:", err);
       }
     }
-  }, [result, hasMounted]);
+  }, [result, isClient]);
 
-  if (!hasMounted || !result) {
+  if (!isClient || !result) {
     return (
       <div suppressHydrationWarning className="min-h-screen bg-surface flex items-center justify-center p-6">
         <div className="text-xl font-bold text-primary">Preparing Documentation...</div>
@@ -87,9 +85,6 @@ export default function DocumentResultPage() {
     );
   }
 
-  const handlePrint = () => {
-    window.print();
-  };
 
   const handleSpeak = () => {
     if (speaking) {
@@ -333,11 +328,11 @@ export default function DocumentResultPage() {
                   <span className="bg-primary text-white text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded">Analysis Report v2.1</span>
                 </div>
                 <h1 className="text-6xl md:text-7xl font-black text-primary tracking-tighter uppercase font-headline mb-4 leading-none">
-                  We've analyzed <br/> your notice.
+                  We&apos;ve analyzed <br/> your notice.
                 </h1>
                 <div className="flex flex-wrap items-center gap-4">
                   <p className="text-primary font-bold uppercase text-[10px] tracking-[0.2em] pr-4">
-                    Here's what you need to know.
+                    Here&apos;s what you need to know.
                   </p>
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-success/10 rounded-full border border-success/20 no-print">
                     <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
